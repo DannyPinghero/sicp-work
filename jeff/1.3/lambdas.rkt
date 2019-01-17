@@ -120,3 +120,29 @@
 ; (It's something like O(log) steps actually, isn't it?)
 (undamped-xx)
 (damped-xx)
+
+; Exercise 1.37
+; We're going to start with the recursive implementation,
+; since it's a little more intuitive.
+; (I've verified that both of these work.)
+(define (cont-frac n d k)
+    (define (term i)
+        (if (> i k)
+            0
+            (/ (n i) (+ (d i) (term (+ i 1))))))
+    (term 1))
+; In the iterative code, we'll start with the kth term.
+; Otherwise, it would be hard to reason about the previous term's denominator.
+(define (cont-frac n d k)
+    (define (term result i)
+        (if (= i 0)
+            result
+            (term (+ (/ (n i) (+ (d i) result))) (- i 1))))
+    (term 0 k))
+; These should be about the same.
+; 100 terms seems sufficient to get us 4 decimal places;
+; I'm not sure if there's a mathematically interesting threshold
+; at which we cross this precision.
+(echo (/ 1 (golden-ratio)))
+(echo (cont-frac (lambda (i) 1.0) (lambda (i) 1.0) 100))
+
