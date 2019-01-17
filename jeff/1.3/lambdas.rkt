@@ -169,3 +169,19 @@
 (echo (- (exp 1.0) 2))
 (echo (cont-frac (lambda (i) 1.0) D 100))
 
+; Exercise 1.39
+; Similar to above, just somewhat trickier terms.
+; Not going to bother doing this iteratively *and* recursively.
+; Not using any lambdas here, though. Hm...
+(define (tan-cf x k)
+    (define (term i)
+        (if (> i k)
+            0
+            (/ (if (= i 1) x (square x))
+               (- (- (* 2 i) 1) (term (+ i 1))))))
+    (term 1))
+; These should be about the same: tan(pi/4) = 1.
+(define pi-4 .78539816339)
+(echo (tan pi-4))
+(echo (tan-cf pi-4 100))
+
