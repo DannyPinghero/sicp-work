@@ -108,9 +108,8 @@
 ;     => x = ln(1000) / ln(x)  <-- change of base.
 ; We should notice some performance improvement with average damping.
 ; We can't start with first-guess=1.0 since that divides by log(1)=0.
-; The answer is obviously going to be between 4 and 8, since:
+; The answer is obviously going to be greater than 4, since:
 ;   4^4 = (2^2)^4 = 2^8 = 256
-;   8^4 = (2^3)^4 = (2^10)(2^2) ~= 4000
 ; so let's just use first-guess=4.0.
 (define (undamped-xx)
     (fixed-point (lambda (x) (/ (log 1000) (log x))) 4.0))
