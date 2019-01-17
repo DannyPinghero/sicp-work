@@ -146,3 +146,27 @@
 (echo (/ 1 (golden-ratio)))
 (echo (cont-frac (lambda (i) 1.0) (lambda (i) 1.0) 100))
 
+; Exercise 1.38
+; It's tempting to calculate D like the Fibonacci numbers:
+;   1 [2 + 1 + 1 =] 4 1 1 6 1 1 8
+;   1 2 1 1 [4 + 1 + 1 =] 6 1 1 8
+;   1 2 1 1 4 1 1 [6 + 1 + 1 =] 8
+; But that implies, at best, an O(n) D, which is not really ideal.
+; (In Python, I would think nothing of pre-caching this array -- but not here.)
+; Notice a pattern:
+;   i: 1 | 2 3 4 | 5 6 7 | 8 9 10| 11
+;   j:   | 0 1 2 | 3 4 5 | 6 7 8 | 9  <-- i - 2
+;   q:   | 0     | 1     | 2     | 3  <-- j//3
+;   T: 1 | 2 1 1 | 4 1 1 | 6 1 1 | 8
+; Observe that, starting at term 2, we're proceeding in "clumps" of 3 such that:
+;   T(i) = i - q, if j%3 == 0;
+;          1, else.
+(define (D i)
+    (let ((j (- i 2)))
+        (if (= (remainder j 3) 0)
+            (- i (quotient j 3))
+            1)))
+; These should be about the same.
+(echo (- (exp 1.0) 2))
+(echo (cont-frac (lambda (i) 1.0) D 100))
+
