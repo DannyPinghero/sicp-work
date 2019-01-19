@@ -236,3 +236,24 @@
 ;     => 21
 (echo (((double (double double)) inc) 5))
 
+; Exercise 1.42
+; Pretty basic!
+(define (compose f g)
+    (lambda (x)
+        (f (g x))))
+(echo ((compose square inc) 6))  ; 49
+
+; Exercise 1.43
+; This is deceptively simple.
+; In fact, I'm kind of surprised it works!
+(define (repeated f n)
+    (define (term i)
+        (if (= i 1)
+            f
+            (compose f (term (- i 1)))))
+    (lambda (x)
+        ((term n) x)))
+; These should be the same.
+(echo (* 5 5 5 5))
+(echo ((repeated square 2) 5))
+
