@@ -185,3 +185,54 @@
 (echo (tan pi-4))
 (echo (tan-cf pi-4 100))
 
+; Exercise 1.40
+; This is a second-order function: f -> f'.
+(define (cubic a b c)
+    (lambda (x)
+        (+ (* x x x)
+           (* a x x)
+           (* b x)
+           c)))
+
+; Exercise 1.41
+(define (inc n) (+ n 1))
+(define (double f)
+    (lambda (x)
+        (f (f x))))
+(echo (inc 1))  ; 2
+(echo ((double inc) 1))  ; 3
+; Quick test:
+;   (echo (((double (double double)) inc) 5))
+;     => 21
+; Or, 5 + 2^4.
+; This result is a bit surprising to me!
+; At first glance, it looks like it should be 13 = 5 + 2^3.
+; Let's expand:
+;   (double
+;       (double
+;           (double
+;               (double inc))) 5)
+;     => (double
+;            (double
+;                (double
+;                    (inc (inc 5)))))
+;     => (double
+;            (double
+;                (inc (inc
+;                    (inc (inc 5))))))
+;     => (double
+;            (inc (inc
+;            (inc (inc
+;                (inc (inc
+;                    (inc (inc 5)))))))))
+;     => (inc (inc
+;        (inc (inc
+;        (inc (inc
+;        (inc (inc
+;            (inc (inc
+;            (inc (inc
+;                (inc (inc
+;                    (inc (inc 5))))))))))))))))
+;     => 21
+(echo (((double (double double)) inc) 5))
+
