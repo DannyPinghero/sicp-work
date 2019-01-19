@@ -185,3 +185,110 @@
 (echo (tan pi-4))
 (echo (tan-cf pi-4 100))
 
+; Exercise 1.40
+; This is a second-order function: f -> f'.
+(define (cubic a b c)
+    (lambda (x)
+        (+ (* x x x)
+           (* a x x)
+           (* b x)
+           c)))
+
+; Exercise 1.41
+(define (inc n) (+ n 1))
+(define (double f)
+    (lambda (x)
+        (f (f x))))
+(echo (inc 1))  ; 2
+(echo ((double inc) 1))  ; 3
+; Quick test:
+;   (echo (((double (double double)) inc) 5))
+;     => 21
+; Or, 5 + 2^4.
+; This result is a bit surprising to me!
+; At first glance, it looks like it should be 13 = 5 + 2^3.
+; Let's expand:
+;   (double
+;       (double
+;           (double
+;               (double inc))) 5)
+;     => (double
+;            (double
+;                (double
+;                    (inc (inc 5)))))
+;     => (double
+;            (double
+;                (inc (inc
+;                    (inc (inc 5))))))
+;     => (double
+;            (inc (inc
+;            (inc (inc
+;                (inc (inc
+;                    (inc (inc 5)))))))))
+;     => (inc (inc
+;        (inc (inc
+;        (inc (inc
+;        (inc (inc
+;            (inc (inc
+;            (inc (inc
+;                (inc (inc
+;                    (inc (inc 5))))))))))))))))
+;     => 21
+(echo (((double (double double)) inc) 5))
+
+; Exercise 1.42
+; Pretty basic!
+(define (compose f g)
+    (lambda (x)
+        (f (g x))))
+(echo ((compose square inc) 6))  ; 49
+
+; Exercise 1.43
+; This is deceptively simple.
+; In fact, I'm kind of surprised it works!
+(define (repeated f n)
+    (define (term i)
+        (if (= i 1)
+            f
+            (compose f (term (- i 1)))))
+    (lambda (x)
+        ((term n) x)))
+; These should be the same.
+(echo (* 5 5 5 5))
+(echo ((repeated square 2) 5))
+
+; Exercise 1.44
+(define dx 0.01)
+(define (smooth f)
+    (lambda (x)
+        (/ (+ (f (- x dx))
+              (f x)
+              (f (+ x dx)))
+           3)))
+(define (fold-smoothed f n)
+    (lambda (x)
+        (((repeated smooth n) f) x)))
+; This isn't really obvious to me.
+; Let's do a 2-fold expansion:
+;   ((smooth (smooth square)) 5)
+;     => (/ (+ ((smooth square) 4.99)
+;              ((smooth square) 5)
+;              ((smooth square) 5.01))
+;           3)
+;     => (/ (+ (/ (+ (square 4.98)
+;                    (square 4.99)
+;                    (square 5.00))
+;                 3)
+;              (/ (+ (square 4.99)
+;                    (square 5.00)
+;                    (square 5.01))
+;                 3)
+;              (/ (+ (square 5.00)
+;                    (square 5.01)
+;                    (square 5.02))
+;                 3))
+;           3)
+(echo (square 5))
+(echo ((smooth square) 5))
+(echo ((fold-smoothed square 10) 5))
+
