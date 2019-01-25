@@ -61,5 +61,5 @@
 ; A couple test cases, by no means exhaustive...
 (print-rat (make-rat -18 20))  ; -18/20 => -9/10.
 (print-rat (make-rat -8 -4))  ; -8/-4 => 8/4 => 2/1.
-(print-rat (make-rat 8 -50))  ; 8/-50 => -4/25.
-(print-rat (make-rat 0 10))  ; 0/-10 => 0/1 = 0.
+(print-rat (make-rat 8 -50))  ; 8/-50 => -8/50 => -4/25.
+(print-rat (make-rat 0 10))  ; 0/10 => 0/1 = 0.

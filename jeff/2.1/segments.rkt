@@ -102,7 +102,7 @@
 ;   | 2 4 6   x
 ; Then:
 ;   h = (2, 5) -> (6, 5)
-;   v = (4, 3) => (4 ,7)
+;   v = (4, 3) -> (4 ,7)
 ; It's possible to devise the "corners" by taking the relevant tips of h and v,
 ; and the "center" by finding the midpoints of h and v.
 ; But we don't need to here...
