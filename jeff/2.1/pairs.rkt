@@ -58,8 +58,7 @@
 ;   3 * 3 * 3 * ... = 2 * k
 ;   ^----- i -----^   v--- i - 1 ---v
 ;     => 3 = 2 * k / (3 * 3 * 3 * ...)
-;     => 3 = (2 / (3 * 3 * 3 * ...)) * k
-;     => 3 = N * k, where N = 2 / (3 * 3 * 3* ...)
+;     => 3 = 2 * k'
 ;     => 3 is composite.
 ; Contradiction!
 ; Cool. So:
@@ -80,3 +79,4 @@
 (define foobar (cons 237 994))
 (echo (car foobar))
 (echo (cdr foobar))
+
