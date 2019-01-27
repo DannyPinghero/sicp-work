@@ -480,3 +480,29 @@
 (display "fix length encoding length: ")
 (display (* 3 (length rock-song))) ; 108
 (newline)
+
+; 2.71
+a1 b2 c4 d8 e16
+			ab3			c4 d8 e16
+		a			b
+
+			abc7		d8 e16
+		ab3  |  c4
+	a	|	b
+
+				abcd8
+			abc7  |  d8
+			etc
+
+				abcde
+			abcd  |  e16
+
+most frequent symbol, e, takes just 1 bit (a 1)
+least, the a or b, takes 4 0001 or 0000
+
+in general there'll be n levels, so n-1 bits for the least frequent symbol
+
+; 2.72
+ ; -
+
+
