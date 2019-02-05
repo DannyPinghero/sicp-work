@@ -1,3 +1,5 @@
+(define (echo line) (display line) (newline))
+
 ; The rational-number {construct,select}ors defined in the text.
 (define (make-rat n d) (cons n d))
 (define (numer x) (car x))
@@ -63,3 +65,38 @@
 (print-rat (make-rat -8 -4))  ; -8/-4 => 8/4 => 2/1.
 (print-rat (make-rat 8 -50))  ; 8/-50 => -8/50 => -4/25.
 (print-rat (make-rat 0 10))  ; 0/10 => 0/1 = 0.
+
+; Exercise 2.6
+(define (inc x) (+ x 1))
+(define zero (lambda (f) (lambda (x) x)))
+(define (add-1 n)
+    (lambda (f) (lambda (x) (f ((n f) x)))))
+; 1
+; (((add-1 zero) inc) 0)
+; (((lambda (f) (lambda (x) (f ((zero f) x)))) inc) 0)
+; (((lambda (f) (lambda (x) (f (((lambda (f) (lambda (x) x)) f) x)))) inc) 0)
+; (((lambda (f) (lambda (x) (f ((lambda (x) x) x)))) inc) 0)
+; (((lambda (f) (lambda (x) (f x))) inc) 0)
+; ((lambda (x) (inc x))  0)
+; (inc 0)
+; 1
+(define one
+    (((lambda (f) (lambda (x) (f ((lambda (x) x) x)))) inc) 0))
+; 2
+; (((add-1 (add-1 zero)) inc) 0)
+; (((add-1 (lambda (f) (lambda (x) (f (((lambda (f) (lambda (x) x)) f) x))))) inc) 0)
+; (((lambda (f) (lambda (x) (f (((lambda (f) (lambda (x) (f (((lambda (f) (lambda (x) x)) f) x)))) f) x)))) inc) 0)
+; ((lambda (x) (inc (((lambda (f) (lambda (x) (f (((lambda (f) (lambda (x) x)) f) x)))) inc) x))) 0)
+; ((lambda (x) (inc (((lambda (f) (lambda (x) (f ((lambda (x) x) x)))) inc) x))) 0)
+; ((lambda (x) (inc (((lambda (f) (lambda (x) (f x))) inc) x))) 0)
+; ((lambda (x) (inc ((lambda (x) (inc x)) x))) 0)
+; (inc ((lambda (x) (inc x)) 0))
+; (inc (inc 0))
+; (inc 1)
+; 2
+(define two
+    (((lambda (f) (lambda (x) (f (((lambda (f) (lambda (x) (f (((lambda (f) (lambda (x) x)) f) x)))) f) x)))) inc) 0))
+(echo one)
+(echo two)
+; I'm not sure that I totally understand this exercise.
+; It appears that I'm taking it a bit literally...
