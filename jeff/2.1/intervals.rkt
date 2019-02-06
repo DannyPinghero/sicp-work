@@ -22,15 +22,10 @@
 ; But do we have to check every permutation? Probably not.
 ; Let's consider all the cases in the above example:
 ;   (-10, -1) - (-9, 5)
-;     => ((min (- -10  5)
-;              (-  -9 -1)),
-;         (max (- -1  -9)
-;              (-  5 -10)))
-;     => (-15, 15)
+;     => ((- -10 5), (- -1 -9))
+;     => (-15, 8)
 ; Notice, we omitted some pointless combinations, e.g.:
 ;   (- -10   5) <= (- -10  -9)
-;   (-  -9  -1) <= (-  -9 -10)
-;   (-   5 -10) >= (-   5  -1)
 ;   (-  -1  -9) >= (-  -1   5)
 ; That is:
 ;   small number - large number
@@ -39,10 +34,8 @@
 ;   large number - small number
 ;     >= large number - large number
 (define (sub-interval a b)
-    (make-interval (min (- (lower-bound a) (upper-bound b))
-                        (- (lower-bound b) (upper-bound a)))
-                   (max (- (upper-bound a) (lower-bound b))
-                        (- (upper-bound b) (lower-bound a)))))
+    (make-interval (- (lower-bound a) (upper-bound b))
+                   (- (upper-bound a) (lower-bound b))))
 (define a (make-interval -10 -1))
 (define b (make-interval  -9  5))
 (define s (sub-interval a b))
