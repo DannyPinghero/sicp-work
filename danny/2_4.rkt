@@ -59,3 +59,29 @@ b)
 			rec-or-false
 			(find-employee-record name (cdr departments)))))
 ; d) just install the appropriate functions into the dispatch table
+
+
+; 2.75
+(define (make-from-ang-mag r th)
+	(define (dispatch op)
+		(cond 
+			((eq? op 'mag) r)
+			((eq? op 'ang) th)
+			((eq? op 'real-part) (* r (cos th)))
+			((eq? op 'imag-part) (* r (sin th)))
+			(else (error "You done fucked up" op))))
+	dispatch)
+
+; 2.76
+Obv explicit dispatch is crap, everything needs to be rewritten when a 
+new type or new operation is added 
+For data-directed,
+to add a new type, modify all the operators to know about that type
+to add a new operation, you write a new install
+For message passing
+to add a new type you write a new smart type with a dispatch for all operators
+to add a new operation, you modify all existing types
+
+
+
+
