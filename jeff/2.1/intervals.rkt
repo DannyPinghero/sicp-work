@@ -42,3 +42,28 @@
 (echo (lower-bound s))
 (echo (upper-bound s))
 
+; Exercise 2.9
+(define (width i) (/ (- (upper-bound i) (lower-bound i)) 2))
+; It's obviously true for addition:
+;   I  = (l, u)
+;   WI = (I.u - I.l) / 2
+;   S  = (A.l + B.l, A.u + B.u)
+;   WS = ((A.u + B.u) - (A.l + B.l)) / 2
+;      = (A.u - A.l) / 2 + (B.u - B.l) / 2
+;      = WA + WB
+; Let's demonstrate:
+(define (add-interval a b)
+    (make-interval (+ (lower-bound a) (lower-bound b))
+                   (+ (upper-bound a) (upper-bound b))))
+(define (smart-add-width a b)
+    (+ (width a) (width b)))
+(define (naive-add-width a b)
+    (width (add-interval a b)))
+(echo (smart-add-width a b))
+(echo (naive-add-width a b))
+; Then suppose:
+;   P  = (A.l * B.l, A.u * B.u)
+;   WP = (A.u * B.u - A.l * B.l) / 2
+; This is just one possible case of mul-interval,
+; in which WP pretty obviously can't be decomposed in terms of WA and WB.
+
