@@ -112,7 +112,7 @@
 ;    + + | + -
 ;    + + | + +
 ; Notice right away that a lot of these combinations are impossible,
-; e.g. row 3, since YL < YU. So:
+; e.g. row 3, since YL > YU. So:
 ;    L U | L U
 ;   --X--+--Y--
 ;    - - | - -
