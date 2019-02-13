@@ -133,10 +133,10 @@
 ;    XL*YU | - - | + + | XU*YL
 ;    XU*YL | - + | - - | XL*YL
 ;      ?   | - + | - + |   ?
-;    xL*YU | - + | + + | XU*YU
+;    XL*YU | - + | + + | XU*YU
 ;    XU*YL | + + | - - | XL*YU
 ;    XU*YL | + + | - + | XU*YU
-;    xL*YL | + + | + + | XU*YU
+;    XL*YL | + + | + + | XU*YU
 ; Assuming I've made no mistakes above -- its possible! --
 ; we can see that the only "indeterminate" case is (-+, -+),
 ; since we don't know which of (XL*YU) or (XU*YL) is smaller,
