@@ -176,7 +176,7 @@
                (make-interval (* XL YL) (* XU YU)))
               ((and (neg? XL) (pos? XU) (neg? YL) (pos? YU))
                (make-interval (min (* XL YU) (* XU YL))
-                               (max (* XU YU) (* XL YL)))))))
+                              (max (* XU YU) (* XL YL)))))))
 ; Some random testing.
 ; I'm not really going to inspect this too carefully.
 ; I may have made some typos, etc. but the idea is correct.
@@ -216,3 +216,40 @@
 (print-mul-interval neg2 non1)
 (print-mul-interval neg2 non2)
 (print-mul-interval non1 non2)
+
+; Exercise 2.12
+(define (make-center-percent center tolerance)
+    (let ((delta (* center tolerance)))
+        (make-interval (- center delta)
+                       (+ center delta))))
+(define (center i)
+    (/ (+ (lower-bound i) (upper-bound i)) 2))
+; This one's algebraic:
+;   L = C - T*C
+;     => C(1 - T) = L
+;     => 1 - T = L / C
+;     => T = 1 - (L / c)
+(define (percent i)
+    (- 1 (/ (lower-bound i) (center i))))
+(define R (make-center-percent 68 10))
+(echo (center R))
+(echo (percent R))
+
+; Exercise 2.13
+; Suppose:
+;   I0 = (C0 - T0*C0, C0 + T0*C0)
+;   I1 = (C1 - T1*C1, C1 + T1*C1)
+; Further suppose that {T0, T1} are small.
+; Then one possible product term is:
+;   P01 = I0 * I1
+;       = (C0 - T0*C0) * (C1 + T1*C1)
+;       = C0*C1 + T1*C0*C1 - T0*C0*C1 - T0*T1*C0*C1
+;      ~= C0*C1 + T1*C0*C1 - T0*C0*C1
+;       = C0*C1 * (1 + T1 - T0)
+; In general:
+;   P = I0 * I1
+;     = (C0 +- T0*C0) * (C1 +- T1*C1)
+;     = C0*C1 +- T1*C0*C1 +- T0*C0*C1 +- T0*T1*C0*C1
+;    ~= C0*C1 +- T1*C0*C1 +- T0*C0*C1
+;     = C0*C1 * (1 +- (T1 +- T0))
+
