@@ -126,3 +126,6 @@ Im going to call it lower instead of project because project is a terrible name
 ; 2.86
 ; yea like it says we just need sqrt and sine and cosine to work on any number type, instead of the
 ; built in scheme number like befre
+
+; 2.87 -2.97
+; yea they seem fine
