@@ -117,3 +117,51 @@
                 (for-each f (cdr items)))))
 (for-each (lambda (x) (display x) (newline))
           (list 57 321 88))
+
+; Exercise 2.24
+;   (list 1 (list 2 (list 3 4)))
+;     => (1 (2 (3 4)))
+;        /  \
+;       1   (2 (3 4))
+;           /  \
+;          2   (3 4)
+;              /   \
+;             3     4
+;              cdr      car
+;     => -> [ 1 * ] -> [ * / ]
+;            car         |      cdr      car
+;                        +-> [ 2 * ] -> [ * / ]
+;                             car         |      cdr
+;                                         +-> [ 3 * ] -> [ 4 / ]
+;                                              car        car
+
+; Exercise 2.25
+(define one (list 1 3 (list 5 7) 9))
+; (1 3 (5 7) 9)
+; cdr => (3 (5 7) 9)
+; cdr => ((5 7) 9)
+; car => (5 7)
+; cdr => (7 /) <- Keep in mind, a list is *not* a pair! It's: 5 -> 7 -> /.
+; car => 7
+(echo (car (cdr (car (cdr (cdr one))))))
+(define two (list (list 7)))
+; ((7))
+; car => (7)
+; car => 7 <- Here we avoid that issue, since we're taking car.
+(echo (car (car two)))
+(define three (list 1 (list 2 (list 3 (list 4 (list 5 (list 6 7)))))))
+; (1 (2 (3 (4 (5 (6 7))))))
+; cdr => ((2 (3 (4 (5 (6 7))))))
+; car => (2 (3 (4 (5 (6 7))))
+; cdr => ((3 (4 (5 (6 7)))))
+; car => (3 (4 (5 (6 7))))
+; cdr => ((4 (5 (6 7))))
+; car => (4 (5 (6 7)))
+; cdr => ((5 (6 7)))
+; car => (5 (6 7))
+; cdr => ((6 7))
+; car => (6 7)
+; cdr => (7 /)
+; car => 7 <- 6 pairs.
+(echo (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr
+    three)))))))))))))
