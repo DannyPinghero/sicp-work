@@ -15,20 +15,12 @@
 ;     = reverse([3, 4]) + [2, 1]
 ;     = reverse([4]) + [3, 2, 1]
 ;     = [4, 3, 2, 1]
-; which can't be implemented efficiently,
-; since there's no obvious way to append a constant to a list
-; without rebuilding the entire list...
-; (It's trivial to *prepend* to a list: (cons elem l).
-;  If we stored the tail in car and the head in cdr, we could do (cons l elem);
-;  but we don't.)
-(define (append x y)
-    (if (null? x)
-        y
-        (cons (car x) (append (cdr x) y))))
 (define (reverse x)
-    (if (null? x)
-        `()
-        (append (reverse (cdr x)) (list (car x) ))))
+    (define (iter y i)
+        (if (null? (cdr y))
+            (cons (car y) i)
+            (iter (cdr y) (cons (car y) i))))
+    (iter x `()))
 (echo (reverse (list 1 4 9 16 25)))
 
 ; Exercise 2.19
