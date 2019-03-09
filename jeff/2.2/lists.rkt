@@ -157,3 +157,45 @@
 ; car => 7 <- 6 pairs.
 (echo (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr
     three)))))))))))))
+
+; Exercise 2.26
+(define x (list 1 2 3))
+(define y (list 4 5 6))
+; (1 2 3 4 5 6)
+(echo (append x y))
+; ((1 2 3) 4 5 6)
+(echo (cons x y))
+; ((1 2 3) (4 5 6))
+(echo (list x y))
+
+; Exercise 2.27
+(define (deep-reverse x)
+    (define (iter y i)
+        (if (null? (cdr y))
+            (cons (deep-reverse (car y)) i)
+            (iter (cdr y) (cons (deep-reverse (car y)) i))))
+    (if (list? x)
+        (iter x `())
+        x))
+
+(define x (list (list 1 2) (list 3 4) 5 6 (list (list 7 8 9))))
+(echo (reverse x))
+(echo (deep-reverse x))
+
+; Exercise 2.28
+; This is batshit.
+; I'm trying to trade a quadratic append for-each element
+; for a linear reverse at end-of-list.
+; But you have no choice at a list boundary...
+(define (fringe x)
+    (define (iter y i)
+        (cond ((null? y) i)
+              ((not (list? (car y))) (iter (cdr y) (cons (car y) i)))
+              (else (iter (cdr y) (append (iter (car y) `()) i)))))
+    (reverse (iter x `())))
+
+(define x (list (list 1 2) (list 3 4)))
+(echo (fringe x))
+(echo (fringe (list x x)))
+(echo (fringe (list 1 2 (list 3 4) 5 (list (list 6 7) 8 (list 9 10 11))
+                    (list 12 13))))
