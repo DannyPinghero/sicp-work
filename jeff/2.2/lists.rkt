@@ -211,7 +211,7 @@
 (define (right-branch     mobile) (cadr mobile))
 (define (branch-length    branch) (car  branch))
 (define (branch-structure branch) (cadr branch))
-(define (is-mobile? mobile) (list? mobile))  ; I'll need this later...
+(define (is-mobile? mobile) (pair? mobile))  ; I'll need this later...
 ; B)
 (define (total-weight mobile)
     (if (is-mobile? mobile)  ; Recursive style this time...
@@ -276,7 +276,6 @@
 (define (right-branch     mobile) (cdr mobile))
 (define (branch-length    branch) (car branch))
 (define (branch-structure branch) (cdr branch))
-(define (is-mobile? mobile) (pair? mobile))  ; ;)
 (define a-mobile (new-mobile))
 (echo (total-weight a-mobile))
 (echo (is-balanced? a-mobile))
