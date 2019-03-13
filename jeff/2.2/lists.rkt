@@ -199,3 +199,85 @@
 (echo (fringe (list x x)))
 (echo (fringe (list 1 2 (list 3 4) 5 (list (list 6 7) 8 (list 9 10 11))
                     (list 12 13))))
+
+; Exercise 2.29
+; This representation seems a bit weird at first -- why not cons?
+; But it's kind of cool because it prints the mobile as a tree.
+; (Which it is.)
+(define (make-mobile left right)       (list left right))
+(define (make-branch length structure) (list length structure))
+; A)
+(define (left-branch      mobile) (car  mobile))
+(define (right-branch     mobile) (cadr mobile))
+(define (branch-length    branch) (car  branch))
+(define (branch-structure branch) (cadr branch))
+(define (is-mobile? mobile) (list? mobile))  ; I'll need this later...
+; B)
+(define (total-weight mobile)
+    (if (is-mobile? mobile)  ; Recursive style this time...
+        (+ (total-weight (branch-structure (left-branch mobile)))
+           (total-weight (branch-structure (right-branch mobile))))
+        mobile))
+;                               +  <-- 24 (weight)
+;                              / \
+;                             /   \
+;                           -5-   -7-
+;                            |     |
+;                    14 -->  +     10
+;                           / \
+;                          /   \
+;                        -4-   -3-
+;                         |     |
+;                         6     +  <-- 8
+;                              / \
+;                             /   \
+;                           -3-   -1-
+;                            |     |
+;                            2     6
+(define (new-mobile)
+    (make-mobile
+        (make-branch 5 (make-mobile
+                (make-branch 4 6)
+                (make-branch 3 (make-mobile
+                    (make-branch 3 2)
+                    (make-branch 1 6)))))
+        (make-branch 7 10)))
+(define a-mobile (new-mobile))
+(echo a-mobile)
+(echo (total-weight a-mobile))  ; 6 + 2 + 6 + 10 = 24
+; C)
+; Probably we were meant to use total-weight;
+; but it's super inefficient to run it against every mobile, root to leaf.
+; Instead, return: (balanced, sum) for every level.
+; Even this is somewhat naive; why continue down if not balanced?
+; But anyway...
+(define (is-balanced? mobile)
+    (define (descend mobile)
+        (if (not (is-mobile? mobile))
+            (cons #t mobile)
+            (let ((l (left-branch mobile))
+                  (r (right-branch mobile)))
+                (let ((lb (descend (branch-structure l)))
+                      (rb (descend (branch-structure r))))
+                    (cons
+                        (and (car lb)
+                             (car rb)
+                             (= (* (branch-length l) (cdr lb))
+                                (* (branch-length r) (cdr rb))))
+                        (+ (cdr lb)
+                           (cdr rb)))))))
+    (car (descend mobile)))
+(echo (is-balanced? a-mobile))  ; It is.
+; D)
+; Like, barely.
+(define (make-mobile left right)       (cons left right))
+(define (make-branch length structure) (cons length structure))
+(define (left-branch      mobile) (car mobile))
+(define (right-branch     mobile) (cdr mobile))
+(define (branch-length    branch) (car branch))
+(define (branch-structure branch) (cdr branch))
+(define (is-mobile? mobile) (pair? mobile))  ; ;)
+(define a-mobile (new-mobile))
+(echo (total-weight a-mobile))
+(echo (is-balanced? a-mobile))
+
