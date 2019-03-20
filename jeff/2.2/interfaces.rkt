@@ -119,3 +119,42 @@
             (list (+ (* 4 7) (* 5 9)  (* 6 11))
                   (+ (* 4 8) (* 5 10) (* 6 12)))))
 
+; Exercise 2.38
+; This is subtle!
+; Notice that accumulate actually processes the list right-to-left, recursively.
+; In the iterative style, we process elements as we encounter them.
+(define fold-right accumulate)
+(define (fold-left op initial sequence)
+    (define (iter result rest)
+        (if (null? rest)
+            result
+            (iter (op result (car rest))
+                  (cdr rest))))
+    (iter initial sequence))
+(echo (fold-right / 1 (list 1 2 3)))  ; 3 / 1
+                                      ;   -> 2 / (3 / 1)
+                                      ;   -> 1 / (2 / (3 / 1))
+                                      ;   => 3 / 2
+(echo (fold-left / 1 (list 1 2 3)))   ; 1 / 1
+                                      ;   -> (1 / 1) / 2
+                                      ;   -> ((1 / 1) / 2) / 3
+                                      ;   => 1 / 6
+(echo (fold-right list `() (list 1 2 3)))  ; (3 `())
+                                           ;   -> (2 (3 `()))
+                                           ;   -> (1 (2 (3 `())))
+(echo (fold-left list `() (list 1 2 3)))   ; (`() 1)
+                                           ;   -> ((`() 1) 2)
+                                           ;   -> (((`() 1) 2) 3)
+; Above, we have the same operands: different order, different groupings.
+; So it looks like operations have to be commutative and associative.
+; Which, / and list are definitely *not*!
+
+; Exercise 2.39
+(define X (list 1 2 3 4 5))
+(define (reverse sequence)
+    (fold-right (lambda (x y) (append y (list x))) `() sequence))
+(echo (reverse X))
+(define (reverse sequence)
+    (fold-left (lambda (x y) (cons y x)) `() sequence))
+(echo (reverse X))
+
