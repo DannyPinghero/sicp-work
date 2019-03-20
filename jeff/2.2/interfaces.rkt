@@ -18,7 +18,7 @@
 (echo (length (list 1 2 3 4)))
 
 ; Exercise 2.34
-; This one's a tiny bit tricky;
+; This one's a tiny bit tricky.
 ; You can't multiply a0 by r!
 (define (horner-eval x coefficient-sequence)
     (accumulate (lambda (this-coeff higher-terms) (+ this-coeff (* higher-terms x)))
@@ -56,3 +56,15 @@
 (define T (list 1 (list 2 3 (list 4 5) 6) 7 8 (list 9 10)))
 (echo (map enumerate-tree T))
 (echo (count-leaves T))
+
+; Exercise 2.36
+(define (accumulate-n op init seqs)
+    (if (null? (car seqs))
+        `()  ; This is fucking amazing.
+        (cons (accumulate op init (map car seqs))
+              (accumulate-n op init (map cdr seqs)))))
+(echo (accumulate-n + 0 (list (list 1 2 3)  ; ((1 2 3) (4 5 6) (7 8 9) (10 11 12))
+                              (list 4 5 6)  ; 22 -> ((2 3) (5 6) (8 9) (11 12))
+                              (list 7 8 9)  ; 22 -> 26 -> ((3) (6) (9) (12))
+                              (list 10 11 12))))  ; => 22 -> 26 -> 30
+
