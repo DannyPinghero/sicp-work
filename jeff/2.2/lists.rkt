@@ -183,17 +183,11 @@
 (echo (deep-reverse x))
 
 ; Exercise 2.28
-; This is batshit.
-; I'm trying to trade a quadratic append for-each element
-; for a linear reverse at end-of-list.
-; But you have no choice at a list boundary...
+; Trying to minimize my use of append here...
 (define (fringe x)
-    (define (iter y i)
-        (cond ((null? y) i)
-              ((not (list? (car y))) (iter (cdr y) (cons (car y) i)))
-              (else (iter (cdr y) (append (iter (car y) `()) i)))))
-    (reverse (iter x `())))
-
+    (cond ((null? x) `())
+          ((not (list? (car x))) (cons (car x) (fringe (cdr x))))
+          (else (append (fringe (car x)) (fringe (cdr x))))))
 (define x (list (list 1 2) (list 3 4)))
 (echo (fringe x))
 (echo (fringe (list x x)))
