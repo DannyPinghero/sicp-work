@@ -177,7 +177,7 @@
 ; Exercise 2.41
 ; I'm tempted to use unique-pairs here, but I'm not sure it works.
 ; The requirement is that [m < n for m in (i, j, k)].
-; But unique-pairs won't return, say (4, 4, 4).
+; But unique-pairs won't return, say, (4, 4, 4) for n=5.
 ; Anyway, I'm pretty satisfied with this code!
 ; It's a neat convergence of recursion + flatmap, at least.
 ; And -- bonus! -- it can handle any "arity".
