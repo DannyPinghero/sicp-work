@@ -158,3 +158,47 @@
     (fold-left (lambda (x y) (cons y x)) `() sequence))
 (echo (reverse X))
 
+; Exercise 2.40
+; I don't really understand this exercise;
+; the pairs in the text are already unique!
+; Is it even possible to improve on what they've presented?
+; I don't think so. So here it is:
+(define (flatmap proc seq)
+    (accumulate append `() (map proc seq)))
+(define (unique-pairs n)
+    (flatmap
+        (lambda (i)
+            (map (lambda (j) (list i j))
+                 (range 1 i)))
+        (range 1 n)))
+(echo (unique-pairs 5))
+(echo (unique-pairs 6))
+
+; Exercise 2.41
+; I'm tempted to use unique-pairs here, but I'm not sure it works.
+; The requirement is that [m < n for m in (i, j, k)].
+; But unique-pairs won't return, say, (4, 4) for n=5.
+; Anyway, I'm pretty satisfied with this code!
+; It's a neat convergence of recursion + flatmap, at least.
+; And -- bonus! -- it can handle any "arity".
+; But I don't know if I find it elegant to nest scope in a flatmap lambda...
+; Something about it seems a bit desperate to me; even defective?
+; As if, in the absence of loops, we've cobbled something together.
+(define (nary-sum arity less-than sum)
+    (if (= arity 1)
+        (map list
+             (filter (lambda (n) (= n sum))
+                     (range 1 less-than)))
+        (flatmap
+            (lambda (i)
+                (map (lambda (j) (cons i j))
+                     (nary-sum (- arity 1)
+                               less-than
+                               (- sum i))))
+            (range 1 less-than))))
+(define (triples-of at-most sum-to)
+    (nary-sum 3 (+ at-most 1) sum-to))
+(echo (triples-of 5 10))
+(echo (triples-of 2 4))
+(echo (triples-of 4 12))  ; Degenerate: ((4 4 4)).
+
