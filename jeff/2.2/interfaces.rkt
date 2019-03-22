@@ -182,7 +182,7 @@
 ; It's a neat convergence of recursion + flatmap, at least.
 ; And -- bonus! -- it can handle any "arity".
 ; But I don't know if I find it elegant to nest scope in a flatmap lambda...
-; Something about it seems a bit desparate to me; even defective?
+; Something about it seems a bit desperate to me; even defective?
 ; As if, in the absence of loops, we've cobbled something together.
 (define (nary-sum arity less-than sum)
     (if (= arity 1)
