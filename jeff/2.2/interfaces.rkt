@@ -201,4 +201,62 @@
 (echo (triples-of 5 10))
 (echo (triples-of 2 4))
 (echo (triples-of 4 12))  ; Degenerate: ((4 4 4)).
+(echo (nary-sum 4 10 10))
 
+; Exercise 2.42
+(define (queens board-size)
+    (define (queen-cols k)
+        (if (= k 0)
+            (list empty-board)
+            (filter (lambda (positions) (safe? k positions))
+                    (flatmap
+                        (lambda (rest-of-queens)
+                            (map (lambda (new-row)
+                                     (adjoin-position new-row k rest-of-queens))
+                                 (range 1 (+ board-size 1))))  ; enum-int DNE.
+                        (queen-cols (- k 1))))))
+    (queen-cols board-size))
+(define empty-board `())
+(define (adjoin-position row col board)
+    ; The temptation is to use cons.
+    ; But I'll use a list instead so I can actually read the output.
+    ; This means we replace:
+    ;   car -> car
+    ;   cdr -> cadr
+    (append board (list (list row col))))
+; Consider this 4x4 solution:
+;   horizontal          diagonal
+;   +---+---+---+---+   +---+---+---+---+   +---+---+---+---+
+;   |   |   | Q > x |   |   | x | Q |   |   |   | x | Q | x |
+;   +---+---+---+---+   +---/---+---\---+   +---+---+---+---+
+;   | Q > x > x > x |   | Q |   |   | x |   | Q | x | x | x |
+;   +---+---+---+---+ + +---\---+---/---+ = +---+---+---+---+
+;   |   |   |   | Q |   |   | x | x | Q |   |   | x | x | Q |
+;   +---+---+---+---+   +---+---X---+---+   +---+---+---+---+
+;   |   | Q > x > x |   |   | Q | x |   |   |   | Q | x | x |
+;   +---+---+---+---+   +---+---+---+---+   +---+---+---+---+
+; That is, every queen has a triple of sequences that it eliminates:
+;   1) horizontal, rightward.
+;   2) diagonal, downward rightward.
+;   3) diagonal, upward rightward.
+; We have to determine whether column k is safe.
+; So, start at column k, and, traversing *backward*, check:
+;   1) horizontal, leftward.
+;   2) diagonal, upward leftward.
+;   3) diagonal, downward leftward.
+(define (safe? k board)
+    (let ((kth (car (filter (lambda (mn) (= (cadr mn) k)) board))))
+        (let ((M (car kth))
+              (N (cadr kth)))  ; Not necessary...
+            (define (compare board)
+                (or (null? board)
+                    (let ((m (caar board))
+                          (n (cadar board)))
+                        (or (>= n N)
+                            (and (not (= m M))              ; horiz.
+                                 (not (= m (+ M (- N n))))  ; diag down.
+                                 (not (= m (- M (- N n))))  ; diag up.
+                                 (compare (cdr board)))))))
+            (compare board))))
+(for-each echo (queens 8))
+(for-each echo (queens 4))
