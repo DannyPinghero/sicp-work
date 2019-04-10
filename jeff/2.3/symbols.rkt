@@ -41,11 +41,11 @@
 ;     => (car (quote (quote abracadabra)))
 ;     => (car '(quote abracadabra))
 ;     => quote
-; Also for fun:
+; Also, for fun:
 ;   (cadr ''abracadabra)
 ;     => (cadr (quote (quote abracadabra)))
 ;     => (cadr '(quote abracadabra))
-;     => (car (abracadabra))
+;     => (car '(abracadabra))
 ;     => abracadabra
 (echo (car  ''abracadabra))
 (echo (cadr ''abracadabra))
