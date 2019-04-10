@@ -175,13 +175,10 @@
 (echo (unique-pairs 6))
 
 ; Exercise 2.41
-; I'm tempted to use unique-pairs here, but I'm not sure it works.
-; The requirement is that [m < n for m in (i, j, k)].
-; But unique-pairs won't return, say, (4, 4) for n=5.
-; Anyway, I'm pretty satisfied with this code!
-; It's a neat convergence of recursion + flatmap, at least.
-; And -- bonus! -- it can handle any "arity".
-; But I don't know if I find it elegant to nest scope in a flatmap lambda...
+; It's probably sufficient to use unique-pairs here.
+; Instead, I present a somewhat wacky solution for any "arity".
+; It's a neat convergence of recursion + flatmap, at least...
+; But I don't know if I find it elegant to nest scope in a flatmap lambda.
 ; Something about it seems a bit desperate to me; even defective?
 ; As if, in the absence of loops, we've cobbled something together.
 (define (nary-sum arity less-than sum)
@@ -193,15 +190,21 @@
             (lambda (i)
                 (map (lambda (j) (cons i j))
                      (nary-sum (- arity 1)
-                               less-than
+                               (- i 1)
                                (- sum i))))
             (range 1 less-than))))
 (define (triples-of at-most sum-to)
     (nary-sum 3 (+ at-most 1) sum-to))
-(echo (triples-of 5 10))
-(echo (triples-of 2 4))
-(echo (triples-of 4 12))  ; Degenerate: ((4 4 4)).
-(echo (nary-sum 4 10 10))
+; And, just in case I was mistaken about 2.40!
+; This is basically -- exactly? -- the same thing:
+(define (pairs-of sum-to)
+    (nary-sum 2 (+ sum-to 1) sum-to))
+(echo (triples-of 6 10))
+(echo (triples-of 50 100))
+(echo (triples-of 4 12))  ; Degenerate: ().
+(echo (nary-sum 4 19 20))
+(echo (pairs-of 8))
+(echo (pairs-of 11))
 
 ; Exercise 2.42
 (define (queens board-size)
