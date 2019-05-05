@@ -17,7 +17,6 @@
            (cons (car s1)
                  (intersection-set (cdr s1) s2)))
           (else (intersection-set (cdr s1) s2))))
-
 ; Now, my code.
 ; The union is pretty easy!
 ; We already have a set-membership check in adjoin-set.
