@@ -64,9 +64,9 @@
 ; So, it might be said that this approach is inappropriate when
 ;   K) the size of our "set universe", is greatly overwhelmed by
 ;   N) the size of our "input universe".
-; However, K is large, and we have *very few* collisions.
-; Then the size difference between the two approaches won't be significant.
-; We might appreciate having those quick appends!
+; However, if K is large, and we have *very few* collisions,
+; then the size difference between the two approaches won't be significant,
+; and we might appreciate having those quick appends!
 ; (But then why use a set?)
 
 ; Exercise 2.61
