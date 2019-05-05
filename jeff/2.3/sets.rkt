@@ -69,3 +69,53 @@
 ; Then the size difference between the two approaches won't be significant.
 ; We might appreciate having those quick appends!
 ; (But then why use a set?)
+
+; Exercise 2.61
+; Now we move on to ordered sets.
+; First, some text code:
+(define (element-of-set? x set)
+    (cond ((null? set) #f)
+          ((= x (car set)) #t)
+          ((> x (car set)) #f)
+          (else (element-of-set? x (cdr set)))))
+; This code assumes we always have numbers in our set.
+; (Of course, they're skirting around the issue of "hashing".)
+; Now, my code.
+; We have to write adjoin-set such that the ordering is preserved.
+; To wit: We have to "insert" x *just before* the *first* element larger than x.
+; If that element doesn't exist, x goes at the end of the list.
+; Also, we have to be mindful not to *duplicate* x, if it's already in the list.
+(define (adjoin-set x set)
+    (if (null? set)
+        (list x)
+        (let ((head (car set))
+              (tail (cdr set)))  ; <-- modestly wasteful.
+             (cond ((= head x) set)
+                   ((< head x) (cons head (adjoin-set x tail)))
+                   ((> head x) (cons x set))))))
+; Quick tests:
+(echo (adjoin-set 1 '()))
+(echo (adjoin-set 5 '(1 2 3 4)))
+(echo (adjoin-set 3 '(1 2 4 5)))
+(echo (adjoin-set 2 '(1 2 3 4 5)))
+
+; Exercise 2.62
+; Pretty simple; this is like a merge routine.
+(define (union-set s1 s2)
+    (cond ((null? s1) s2)
+          ((null? s2) s1)
+          (else (let ((h1 (car s1))
+                      (t1 (cdr s1))
+                      (h2 (car s2))
+                      (t2 (cdr s2)))
+                     (cond ((= h1 h2) (cons h1 (union-set t1 t2)))
+                           ((< h1 h2) (cons h1 (union-set t1 s2)))
+                           ((> h1 h2) (cons h2 (union-set s1 t2))))))))
+; Again, quick tests:
+(echo (union-set '() '()))
+(echo (union-set '(1) '()))
+(echo (union-set '() '(1)))
+(echo (union-set '(1) '(1)))  ; No duplicates!
+(echo (union-set '(1 2 3 4) '(3 4 5 6)))
+(echo (union-set '(1 3 5 7) '(2 4 6 8)))
+(echo (union-set '(2 4 6 8) '(1 3 5 7)))
