@@ -118,3 +118,109 @@
 (echo (union-set '(1 2 3 4) '(3 4 5 6)))
 (echo (union-set '(1 3 5 7) '(2 4 6 8)))
 (echo (union-set '(2 4 6 8) '(1 3 5 7)))
+
+; Exercise 2.63
+; First, the implementation:
+(define (entry tree) (car tree))
+(define (left-branch tree) (cadr tree))
+(define (right-branch tree) (caddr tree))
+(define _2_16_A
+        '(7
+          (3
+           (1
+            ()
+            ())
+           (5
+            ()
+            ()))
+          (9
+           ()
+           (11
+            ()
+            ()))))
+(define _2_16_B
+        '(3
+          (1
+           ()
+           ())
+          (7
+           (5
+            ()
+            ())
+           (9
+            ()
+            (11
+             ()
+             ())))))
+(define _2_16_C
+        '(5
+          (3
+           (1
+            ()
+            ())
+           ())
+          (9
+           (7
+            ()
+            ())
+           (11
+            ()
+            ()))))
+; Now, the first algorithm:
+(define (tree->list-1 tree)
+    (if (null? tree)
+        '()
+        (append (tree->list-1 (left-branch tree))
+                (cons (entry tree)
+                      (tree->list-1 (right-branch tree))))))
+; This is a pretty basic in-order walk.
+; But the appends look a bit dangerous...
+; Consider the tree from 2.16.A:
+;       7  <-- root
+;      / \
+;     3   9
+;    / \   \
+;   1   5   11
+; To calculate (tree->list-1 root), we do:
+;   (append (1 3 5)
+;           (cons 7
+;                 (9 11)))
+; Recall that (append A B) is linear w.r.t the size of A,
+; since we have to iterate through A to cons its last element with B.
+; For a balanced tree, this append is deceptively costly!
+; At depth 0, we iterate over n/2 LHS elements.
+; At depth 1, we iterate over n/4 LHS elements.
+; And so on; that is, at depth i we iterate over n/2^i LHS elements.
+; But wait! Sum over levels:
+;   N = n/2 + n/4 + ... + n/2^i  <-- i<=log2n
+;     = n(1/2 + 1/4 + ... + 1/2^i)
+;     < n(1 + 1/2 + 1/4 + ...)
+;     = 2n
+;     = O(n)
+; So, just to collect our results, we've added a linear computation.
+; That's in addition to the linear expense of visiting all nodes in the walk.
+(echo (tree->list-1 _2_16_A))
+(echo (tree->list-1 _2_16_B))
+(echo (tree->list-1 _2_16_C))
+; And, the second algorithm:
+(define (tree->list-2 tree)
+    (define (copy-to-list tree result-list)
+        (if (null? tree)
+            result-list
+            (copy-to-list (left-branch tree)
+                          (cons (entry tree)
+                                (copy-to-list (right-branch tree)
+                                              result-list)))))
+    (copy-to-list tree '()))
+; This one is more efficient.
+; Note that we never do anything more than a cons, which is O(1).
+; Mechanically, what's happening: we build the RHS tree and pass to LHS.
+; So, again, for root:
+;   (copy-to-list (3 ...)
+;                 (cons 7
+;                       (9 11)))
+; So, we append RHS first, then ourself, then LHS.
+; Since it's a cons (prepend), the effect is an in-order walk.
+(echo (tree->list-2 _2_16_A))
+(echo (tree->list-2 _2_16_B))
+(echo (tree->list-2 _2_16_C))
