@@ -100,16 +100,17 @@
 
 ; Exercise 2.62
 ; Pretty simple; this is like a merge routine.
-(define (union-set s1 s2)
-    (cond ((null? s1) s2)
-          ((null? s2) s1)
-          (else (let ((h1 (car s1))
-                      (t1 (cdr s1))
-                      (h2 (car s2))
-                      (t2 (cdr s2)))
-                     (cond ((= h1 h2) (cons h1 (union-set t1 t2)))
-                           ((< h1 h2) (cons h1 (union-set t1 s2)))
-                           ((> h1 h2) (cons h2 (union-set s1 t2))))))))
+(define (merge l1 l2)
+    (cond ((null? l1) l2)
+          ((null? l2) l1)
+          (else (let ((h1 (car l1))
+                      (t1 (cdr l1))
+                      (h2 (car l2))
+                      (t2 (cdr l2)))
+                     (cond ((= h1 h2) (cons h1 (merge t1 t2)))
+                           ((< h1 h2) (cons h1 (merge t1 l2)))
+                           ((> h1 h2) (cons h2 (merge l1 t2))))))))
+(define union-set merge)
 ; Again, quick tests:
 (echo (union-set '() '()))
 (echo (union-set '(1) '()))
@@ -226,6 +227,8 @@
 (echo (tree->list-2 _2_16_A))
 (echo (tree->list-2 _2_16_B))
 (echo (tree->list-2 _2_16_C))
+; Winner:
+(define tree->list tree->list-2)
 
 ; Exercise 2.64
 (define (list->tree elements)
@@ -284,3 +287,35 @@
 ;  If n>1, there's at most n/2 leaves; so 2*n/2=n extra cons.
 ;  Still linear.)
 (echo (list->tree '(1 3 5 7 9 11)))
+
+; Exercise 2.65
+; We can go ordered list->tree and tree->ordered list in O(n).
+; And obvoiusly we can merge ordered lists in O(n).
+; So our solution is O(n) if we restrict ourselves to these 3 operations.
+(define (union-set s1 s2)
+    (list->tree (merge (tree->list s1)
+                       (tree->list s2))))
+(define (intersection-set s1 s2)
+    (define (intersection-list l1 l2 i)
+        (if (or (null? l1)
+                (null? l2))
+            i
+            (let ((h1 (car l1))
+                  (t1 (cdr l1))
+                  (h2 (car l2))
+                  (t2 (cdr l2)))
+                 (cond ((= h1 h2) (intersection-list t1 t2 (cons h1 i)))
+                       ((< h1 h2) (intersection-list t1 l2 i))
+                       ((> h1 h2) (intersection-list l1 t2 i))))))
+    (reverse (intersection-list (tree->list s1)
+                                (tree->list s2)
+                                '())))
+(define ALL (list->tree '(0 1 2 3 4 5 6 7 8 9)))
+(define EVEN (list->tree '(0 2 4 6 8)))
+(define ODD (list->tree '(1 3 5 7 9)))
+(echo (union-set ALL ODD))
+(echo (union-set ALL EVEN))
+(echo (union-set EVEN ODD))
+(echo (intersection-set ALL ODD))
+(echo (intersection-set ALL EVEN))
+(echo (intersection-set EVEN ODD))
