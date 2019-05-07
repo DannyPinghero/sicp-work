@@ -124,6 +124,8 @@
 (define (entry tree) (car tree))
 (define (left-branch tree) (cadr tree))
 (define (right-branch tree) (caddr tree))
+(define (make-tree entry left right)
+    (list entry left right))
 (define _2_16_A
         '(7
           (3
@@ -224,3 +226,61 @@
 (echo (tree->list-2 _2_16_A))
 (echo (tree->list-2 _2_16_B))
 (echo (tree->list-2 _2_16_C))
+
+; Exercise 2.64
+(define (list->tree elements)
+    (car (partial-tree elements (length elements))))
+(define (partial-tree elts n)
+    (if (= n 0)
+        (cons '() elts)
+        (let ((left-size (quotient (- n 1) 2)))
+             (let ((left-result (partial-tree elts left-size)))
+                  (let ((left-tree (car left-result))
+                        (non-left-elts (cdr left-result))
+                        (right-size (- n (+ left-size 1))))
+                       (let ((this-entry (car non-left-elts))
+                             (right-result (partial-tree (cdr non-left-elts)
+                                                         right-size)))
+                            (let ((right-tree (car right-result))
+                                  (remaining-elts (cdr right-result)))
+                                 (cons (make-tree this-entry
+                                                  left-tree
+                                                  right-tree)
+                                        remaining-elts))))))))
+; Ok, this is fun.
+; First, note that the list is sorted.
+; So we can auto-balance the tree by rooting at the midpoint:
+;   +---+---+   +---+---+----+
+;   | 1 | 3 | 5 | 7 | 9 | 11 |
+;   +---+---+   +---+---+----+
+;     |       |       |
+;     v       |       v
+;  ++   +---+ | +---+   +----+
+;  || 1 | 3 | | | 7 | 9 | 11 |
+;  ++   +---+ | +---+   +----+
+;         |   |   |   |   |
+;         v   |   v   |   v
+;      ++   ++|++   ++|++    ++
+;      || 3 ||||| 7 ||||| 11 ||
+;      ++   ++|++   ++|++    ++
+;             |       |
+;             |       |
+; That is:
+;             5
+;            / \
+;           /   \
+;          /     \
+;         1       9
+;          \     / \
+;           3   7   11
+; Above, I've taken care to show the partition: (left, this, right).
+; The point is that we *always* pick a "this".
+; (We have to: it's the entry.)
+; The left and right are either empty, or ordered lists that need to be tree'd.
+; The number of steps grows linearly with the number of elements.
+; That might not be obvious at first, but really we're just consing each "this".
+; And each element gets to be "this" once.
+; (Also, the empty-list "children" of the leaves do as well.
+;  If n>1, there's at most n/2 leaves; so 2*n/2=n extra cons.
+;  Still linear.)
+(echo (list->tree '(1 3 5 7 9 11)))
