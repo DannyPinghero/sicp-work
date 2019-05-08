@@ -319,3 +319,32 @@
 (echo (intersection-set ALL ODD))
 (echo (intersection-set ALL EVEN))
 (echo (intersection-set EVEN ODD))
+
+; Exercise 2.66
+; Mapping of key to sentinel data is just: (key data).
+; Then we walk the tree.
+; Like we've done... quite a few times by now.
+(define (record-key entry)
+    (car entry))
+(define (record-data entry)
+    (cadr entry))
+(define (lookup given root)
+    (if (null? root)
+        #f
+        (let ((record (entry root)))
+             (let ((key (record-key record)))
+                  (cond ((= given key) record)
+                        ((< given key) (lookup given (left-branch root)))
+                        ((> given key) (lookup given (right-branch root))))))))
+(echo (lookup 11
+              '((13 "harden")
+                ((3 "dwyane")
+                 ((0 "lillard")
+                  ()
+                  ())
+                 ((11 "klay")
+                  ()
+                  ()))
+                ((34 "giannis")
+                 ()
+                 ()))))
