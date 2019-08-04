@@ -74,6 +74,7 @@
   (define bad-password-attempts 0)
   (define max-bad-password-attempts 7)
   (define (call-the-cops) "COPS ARE COMIN'")
+  (define passwords (cons password '()))
 
   (define (withdraw amount)
     (if (>= balance amount)
@@ -83,10 +84,19 @@
   (define (deposit amount)
     (set! balance (+ balance amount))
     balance)
+  (define (add-password new-password)
+    (set! passwords (cons new-password passwords))
+    (display passwords)
+    )
+  (define (password-ok password-attempt passwords-to-try)
+    (if (eq? password-attempt (car passwords-to-try))
+        #t
+        (password-ok password-attempt (cdr passwords-to-try))))
   (define (dispatch password-attempt m)
-    (if (eq? password-attempt password)
+    (if (password-ok password-attempt passwords)
         (cond ((eq? m 'withdraw) (begin (set! bad-password-attempts 0) withdraw))
               ((eq? m 'deposit) (begin (set! bad-password-attempts 0) deposit))
+              ((eq? m 'add-password) (begin (set! bad-password-attempts 0) add-password))
               (else (error "Unknown request -- MAKE-ACCOUNT"
                            m)))
         (lambda (x) 
@@ -156,22 +166,20 @@
   inner)
 
 ; 3.7
-; oh this is not good, this makes a fresh account where the 2nd one can use both
-; should just modify the account function to have add password?  or really generate a wrapper of itself that takes one password and forwards the original
 (define (make-joint-account acc cur-password new-password)
-  (let ((balance ((acc cur-password 'get-balance))))
-    (make-account balance cur-password new-password)))
+  ((acc cur-password 'add-password) new-password))
 
+(define (tricky arg)
+  ; this function will return what its given the first time
+  ; and 0 otherwise
+  (define times-called 0)
+  (define (f_ arg2)
+    (set! times-called (+ 1 times-called))
+    (if (= times-called 1) arg2 0))
+  f_)
 
-; 3.8
-; take the monitored function and make it only return the first argument
-(define (f arg)
-  (define called #f)
-  (lambda (x)
-    ((if called
-        0
-        (begin (set! called #t)
-               arg)))))
+(define f (tricky (lambda x x)))
+(+ (f 0) (f 1)) ; prints 0
+(define f2 (tricky (lambda x x)))
+(+ (f2 1) (f2 0)) ; prints 1
 
-(+ (f 0) (f 1))
-(+ (f 1) (f 0))
