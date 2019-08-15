@@ -1,0 +1,5 @@
+(define guts 100)
+(define (f input)
+  (if (= input 100)
+    (begin (set! guts input) guts)
+guts))
